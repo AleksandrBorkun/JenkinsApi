@@ -22,9 +22,11 @@ public class ExcelParser {
 	private final static HSSFWorkbook workBook = new HSSFWorkbook();
 	private HSSFSheet sheet;
 	private HSSFRow row;
-	private String testSuiteName;
+//	private String testSuiteName;
 	private File fileWithReport;
 	private FileOutputStream writer;
+	private String titleSheet = "JobsReport";
+	private int titleRow = 0;
 
 	public static ExcelParser getInstance() {
 		return INSTANCE;
@@ -43,10 +45,8 @@ public class ExcelParser {
 			writer = new FileOutputStream(createFile("src/main/resources/excelReport2.xls"));
 			workBook.write(writer);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -58,33 +58,39 @@ public class ExcelParser {
 
 		for (JenkinsJobDetails jobDetail : JenkinsJobList.getInstance().getJenkinsJobList()) {
 
-			createSheet(jobDetail.getJobName());
-			createRow(0);
-			createFirstCell().setCellValue(jobDetail.getJobName());
-			createSecondCell().setCellValue(jobDetail.getCountOfFail());
+			createSheet(titleSheet);										//This code
+			createRow(titleRow);											//Create title sheet
+			titleRow++;														// and write there 
+			createFirstCell().setCellValue(jobDetail.getJobName());			//Job Name & Count of
+			createSecondCell().setCellValue(jobDetail.getCountOfFail());	// failed tests
 
-			for (TestSuiteFromJenkins testSuite : jobDetail.getTestSuiteList()) {
-				createNextRow();
-				createNextRow();
-				createFirstCell().setCellValue(testSuite.getSuiteName());
-				createSecondCell().setCellValue(testSuite.getCountOfFailedTests());
+			createSheet(jobDetail.getJobName());											//
+			createRow(0);																	// THIS CODE
+			createFirstCell().setCellValue(jobDetail.getJobName());							// CREATE A NEW SHEET
+			createSecondCell().setCellValue(jobDetail.getCountOfFail());					//
 
-				for (TestCasesFromSuite testCase : testSuite.getTestCaseList()) {
+			for (TestSuiteFromJenkins testSuite : jobDetail.getTestSuiteList()) {			//
+				createNextRow();															// AND PREPARE 
+				createNextRow();															// FULL INFORMATION
+				createFirstCell().setCellValue(testSuite.getSuiteName());					// ABOUT JENKINS JOB
+				createSecondCell().setCellValue(testSuite.getCountOfFailedTests());			//
+																									
+				for (TestCasesFromSuite testCase : testSuite.getTestCaseList()) {			//
 
-					createNextRow();
-					createFirstCell().setCellValue(testCase.getTestCaseName());
-					createSecondCell().setCellValue(testCase.getErrorLog());
+					createNextRow();														//  FOR WRITE IT
+					createFirstCell().setCellValue(testCase.getTestCaseName());				//	TO EXCEL FILE
+					createSecondCell().setCellValue(testCase.getErrorLog());				//
 				}
 			}
 		}
 	}
 
 	private HSSFCell createFirstCell() {
-		return row.createCell(1);
+		return row.createCell(0);
 	}
 
 	private HSSFCell createSecondCell() {
-		return row.createCell(2);
+		return row.createCell(1);
 	}
 
 	private HSSFRow createRow(int numOfRow) {
@@ -96,7 +102,7 @@ public class ExcelParser {
 		row = sheet.createRow(row.getRowNum() + 1);
 	}
 
-	private HSSFSheet getCurrentSheet(String jobName) {
+/*	private HSSFSheet getCurrentSheet(String jobName) {
 		if (jobName.contains(sheet.getSheetName())) {
 			return sheet;
 		} else {
@@ -104,10 +110,16 @@ public class ExcelParser {
 			return sheet;
 
 		}
-	}
+	} */
 
 	private void createSheet(String jobName) {
-		sheet = workBook.createSheet(jobName);
+		if (jobName.equals("JobsReport") && sheet != null) {
+			sheet = workBook.getSheet(jobName);
+		}
+
+		else {
+			sheet = workBook.createSheet(jobName);
+		}
 	}
 
 	private File createFile(String fileName) {
@@ -134,7 +146,6 @@ public class ExcelParser {
 			try {
 				workBook.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
