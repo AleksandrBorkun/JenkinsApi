@@ -5,6 +5,9 @@ import java.util.List;
 
 public class JenkinsJobDetails {
 	
+	private int countOfPass;
+	private int countOfSkip;
+	private int totalTestsCount;
 	private int countOfFail;
 	private String jobName;
 	private List<TestSuiteFromJenkins> testSuiteList = new ArrayList();
@@ -31,6 +34,30 @@ public class JenkinsJobDetails {
 
 	public void setCountOfFail(int countOfFail) {
 		this.countOfFail = countOfFail;
+	}
+
+	public int getTotalTestsCount() {
+		return totalTestsCount;
+	}
+
+	public void setTotalTestsCount(int totalTestsCount) {
+		this.totalTestsCount = totalTestsCount;
+	}
+
+	public int getCountOfPass() {
+		return countOfPass;
+	}
+
+	public void setCountOfPass(int countOfPass) {
+		this.countOfPass = countOfPass;
+	}
+
+	public int getCountOfSkip() {
+		return countOfSkip;
+	}
+
+	public void setCountOfSkip(int countOfSkip) {
+		this.countOfSkip = countOfSkip;
 	}
 
 }

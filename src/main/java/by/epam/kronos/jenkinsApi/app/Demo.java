@@ -1,16 +1,17 @@
 package by.epam.kronos.jenkinsApi.app;
 
-import by.epam.kronos.jenkinsApi.job.JenkinsReportBuilder;
+import by.epam.kronos.jenkinsApi.job.PrepareReportBuilder;
 import by.epam.kronos.jenkinsApi.parser.ExcelParser;
 
 public class Demo {
 
 	public static void main(String[] args) {
 
-		JenkinsReportBuilder jr = new JenkinsReportBuilder();
+		PrepareReportBuilder jr = new PrepareReportBuilder();
 
-		String[] s = { "Flintstones_Attendance_DomainAPI_develop_soapui",
-						"Flintstones_Attendance_ExceptionsActions_develop_soapui" };
+		String[] s = {  "Flintstones_Attendance_ExceptionsEventsCollaboration_develop_soapui",
+						"Gremlins_Attendance_RegressionUI_develop_selenium",
+						"Flintstones_DocMgmt_apiTests_restAssured"};
 
 		for (int i = 0; i < s.length; i++) {
 			String[] a = null;
@@ -26,6 +27,7 @@ public class Demo {
 				jr.makeReport(s[i]);
 			}
 		}
+		
 		ExcelParser.getInstance().writeReportToExcel();
 
 	}
