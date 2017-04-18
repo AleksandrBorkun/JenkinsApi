@@ -27,7 +27,7 @@ public class ExcelParser {
 	
 	private HSSFSheet sheet;
 	private HSSFRow row;
-	private HSSFCellStyle colorStyle = null;
+
 	private HSSFCellStyle rowStyle = null;
 	private HSSFCellStyle persentageStyle = null;
 	private File fileWithReport;
@@ -76,27 +76,33 @@ public class ExcelParser {
 																				//This code
 			createRow(titleRow);												//Create title sheet
 			titleRow++;															// and write there 
-			createFirstCell().setCellValue(jobDetail.getJobName());				//Job Name & Count of
-			createSecondCell().setCellValue(jobDetail.getCountOfFail());		// failed tests
-			createThirdCell().setCellValue(jobDetail.getTotalTestsCount());		//& total tests
+			createCell(0).setCellValue(jobDetail.getJobName());					//Job Name & Count of
+			createCell(1).setCellValue(jobDetail.getCountOfFail());				// failed tests
+			createCell(2).setCellValue(jobDetail.getCountOfSkip());				// Skip
+			createCell(3).setCellValue(jobDetail.getCountOfPass());				// Pass
+			createCell(4).setCellValue(jobDetail.getTotalTestsCount());			//& total tests
 			
+			if(jobDetail.getCountOfFail() == 0)
+				continue;
 			createSheet(jobDetail.getJobName());											//
 			createHeaderForJodDetailsSheet();												//
 			createNextRow();																// THIS CODE
-			createFirstCell().setCellValue(jobDetail.getJobName());							// CREATE A NEW SHEET
-			createSecondCell().setCellValue(jobDetail.getCountOfFail());					//
-
+			createCell(0).setCellValue(jobDetail.getJobName());								//
+			getCell(0).setCellStyle(getBoldFont());											// CREATE A NEW SHEET
+			createCell(1).setCellValue(jobDetail.getCountOfFail());							//
+																							//
 			for (TestSuiteFromJenkins testSuite : jobDetail.getTestSuiteList()) {			//
 				createNextRow();															// AND PREPARE 
 				createNextRow();															// FULL INFORMATION
-				createFirstCell().setCellValue(testSuite.getSuiteName());					// ABOUT JENKINS JOB
-				createSecondCell().setCellValue(testSuite.getCountOfFailedTests());			//
-																									
+				createCell(0).setCellValue(testSuite.getSuiteName());						// ABOUT JENKINS JOB
+				getCell(0).setCellStyle(getBoldFont());										//
+				createCell(1).setCellValue(testSuite.getCountOfFailedTests());				//
+																							//		
 				for (TestCasesFromSuite testCase : testSuite.getTestCaseList()) {			//
-
+																							//
 					createNextRow();														//  FOR WRITE IT
-					createFirstCell().setCellValue(testCase.getTestCaseName());				//	TO EXCEL FILE
-					createSecondCell().setCellValue(testCase.getErrorLog());				//
+					createCell(0).setCellValue(testCase.getTestCaseName());					//	TO EXCEL FILE
+					createCell(1).setCellValue(testCase.getErrorLog());						//
 				}
 			}
 		}
@@ -106,27 +112,14 @@ public class ExcelParser {
 		
 	}
 
-	private HSSFCell createFirstCell() {
-		return row.createCell(0);
-	}
-	
-	private HSSFCell createThirdCell() {
-		return row.createCell(2);
+	private HSSFCell createCell(int i) {
+		return row.createCell(i);
 	}
 
-	private HSSFCell createSecondCell() {
-		return row.createCell(1);
+	private HSSFCell getCell(int i) {
+		return row.getCell(i);
 	}
 
-	private HSSFCell getFirstCell() {
-		return row.getCell(0);
-	}
-	private HSSFCell getSecondCell() {
-		return row.getCell(1);
-	}
-	private HSSFCell getThirdCell() {
-		return row.getCell(2);
-	}
 	private HSSFRow createRow(int numOfRow) {
 		row = sheet.createRow(numOfRow);
 		return row;
@@ -137,6 +130,7 @@ public class ExcelParser {
 	}
 
 	private void createSheet(String jobName) {
+		
 		if (jobName.equals("JobsReport") && sheet != null) {
 			sheet = workBook.getSheet(jobName);
 			sheet.setColumnWidth(0, 19200); // 19200/256 = 75
@@ -147,6 +141,7 @@ public class ExcelParser {
 			sheet.setColumnWidth(0, 19200); // 19200/256 = 75
 		}
 		else{
+			jobName = jobName.substring((jobName.length()-31), jobName.length());
 			sheet = workBook.createSheet(jobName);
 			sheet.setColumnWidth(0, 19200); // 19200/256 = 75
 			sheet.setColumnWidth(1, 19200); // 19200/256 = 75
@@ -157,12 +152,16 @@ public class ExcelParser {
 		
 		if(titleRow == 0){									
 			createRow(titleRow);							
-			createFirstCell().setCellValue("Job Name");			//	THIS CODE 
-			getFirstCell().setCellStyle(getBoldFont());			//	CREATE A HEADER
-			createSecondCell().setCellValue("Failed");			//	FOR OUR TITLE
-			getSecondCell().setCellStyle(getBoldFont());		//	SHEET
-			createThirdCell().setCellValue("Total");
-			getThirdCell().setCellStyle(getBoldFont());		
+			createCell(0).setCellValue("Job Name");			//	THIS CODE 
+			getCell(0).setCellStyle(getBoldFont());			//	CREATE A HEADER
+			createCell(1).setCellValue("Failed");			//	FOR OUR TITLE
+			getCell(1).setCellStyle(getBoldFont());			//	SHEET
+			createCell(2).setCellValue("Skiped");			
+			getCell(2).setCellStyle(getBoldFont());			
+			createCell(3).setCellValue("Passed");			
+			getCell(3).setCellStyle(getBoldFont());	
+			createCell(4).setCellValue("Total");
+			getCell(4).setCellStyle(getBoldFont());		
 			titleRow++;
 		}		
 	}
@@ -171,27 +170,32 @@ public class ExcelParser {
 		
 		createSheet(titleSheet);
 				
-		createRow(titleRow);																//
+		createRow(titleRow);															//
 		
-		createFirstCell().setCellValue("Total Result");										//	Make a Total
-		getFirstCell().setCellStyle(getBoldFont()); 										//	 Result report	
+		createCell(0).setCellValue("Total Result");										//	Make a Total
+		getCell(0).setCellStyle(getBoldFont()); 										//	 Result report	
 		
-		createSecondCell().setCellFormula("SUM(B2:B"+row.getRowNum()+")");;	
-		getSecondCell().setCellStyle(getColorStyle("red"));		
+		createCell(1).setCellFormula("SUM(B2:B"+row.getRowNum()+")");;	
+		getCell(1).setCellStyle(getColorStyle("red"));		
+		createCell(2).setCellFormula("SUM(C2:C"+row.getRowNum()+")");;	
+		getCell(2).setCellStyle(getColorStyle("blue"));
+		createCell(3).setCellFormula("SUM(D2:D"+row.getRowNum()+")");;	
+		getCell(3).setCellStyle(getColorStyle("green"));
+		createCell(4).setCellFormula("SUM(E2:E"+row.getRowNum()+")");	
 		
-		createThirdCell().setCellFormula("SUM(C2:C"+row.getRowNum()+")");	
-		
-		titleRow++; 																		//
+		titleRow++; 																		
 		createRow(titleRow);
 		
-		createFirstCell().setCellValue("Result in Percent");
-		getFirstCell().setCellStyle(getBoldFont());											//	 	
-		
-		createSecondCell().setCellFormula("(B"+row.getRowNum()+"/C"+row.getRowNum()+")");	// Make a Total
-		getSecondCell().setCellStyle(getPercentStyle());									// Result report
-		
-		createThirdCell().setCellValue(1);													// in percent
-		getThirdCell().setCellStyle(getPercentStyle());										//					
+		createCell(0).setCellValue("Result in Percent");
+		getCell(0).setCellStyle(getBoldFont());										//	 	
+		createCell(1).setCellFormula("(B"+row.getRowNum()+"/E"+row.getRowNum()+")");// Make a Total
+		getCell(1).setCellStyle(getPercentStyle());									// Result report
+		createCell(2).setCellFormula("(C"+row.getRowNum()+"/E"+row.getRowNum()+")");// in percent
+		getCell(2).setCellStyle(getPercentStyle());
+		createCell(3).setCellFormula("(D"+row.getRowNum()+"/E"+row.getRowNum()+")");													
+		getCell(3).setCellStyle(getPercentStyle());
+		createCell(4).setCellValue(1);													
+		getCell(4).setCellStyle(getPercentStyle());														
 	
 		
 	}
@@ -199,10 +203,10 @@ public class ExcelParser {
 	private void createHeaderForJodDetailsSheet(){
 		
 		createRow(0);
-		createFirstCell().setCellValue("JobName/SuiteName/TestCaseName");
-		getFirstCell().setCellStyle(getBoldFont());
-		createSecondCell().setCellValue("Failed/Error log");
-		getSecondCell().setCellStyle(getBoldFont());
+		createCell(0).setCellValue("JobName/SuiteName/TestCaseName");
+		getCell(0).setCellStyle(getBoldFont());
+		createCell(1).setCellValue("Failed/Error log");
+		getCell(1).setCellStyle(getBoldFont());
 		
 		
 		
@@ -221,9 +225,8 @@ public class ExcelParser {
 	}
 	
 	private HSSFCellStyle getColorStyle(String color){
-		if(colorStyle == null){
-			colorStyle = workBook.createCellStyle();
-		}
+	 HSSFCellStyle colorStyle = workBook.createCellStyle();
+		
 		HSSFFont font = workBook.createFont();
 		if(color.toUpperCase().equals("RED"))
 		font.setColor(font.COLOR_RED);
@@ -243,7 +246,7 @@ public class ExcelParser {
 		
 		if(persentageStyle == null){
 		persentageStyle = workBook.createCellStyle();
-		persentageStyle.setDataFormat(workBook.createDataFormat().getFormat("##.##%"));
+		persentageStyle.setDataFormat(workBook.createDataFormat().getFormat("0.00%"));
 			}
 		
 		return persentageStyle;

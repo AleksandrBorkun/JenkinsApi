@@ -30,7 +30,7 @@ public class JSOUBParser {
 			doc = Jsoup.parse(file, "UTF-8");
 
 			int totalTestsCount = doc.getElementsByAttributeValue("class", "test-name").size(); // total
-																								// tests
+			int countOfSkipedTests = doc.getElementsByAttributeValue("class", "test-status label right outline capitalize skip").size();	//count of skiped																			// tests
 
 			Elements links = doc.getElementsByTag("td");
 
@@ -83,8 +83,8 @@ public class JSOUBParser {
 			testSuite.setCountOfFailedTests(countOfFailedTestsInSuite);
 			jobDet.setCountOfFail(countOfFailedTests);
 			jobDet.addTestSuiteToList(testSuite);
+			jobDet.setCountOfSkip(countOfSkipedTests);
 			JenkinsJobList.getInstance().addJenkinsJobToList(jobDet);
-
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
