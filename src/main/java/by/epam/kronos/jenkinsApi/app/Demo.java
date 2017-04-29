@@ -5,18 +5,20 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import by.epam.kronos.jenkinsApi.entity.JenkinsJobList;
 import by.epam.kronos.jenkinsApi.job.PrepareReportBuilder;
 import by.epam.kronos.jenkinsApi.parser.ExcelParser;
 import by.epam.kronos.jenkinsApi.utils.ReportNameMaker;
 
 public class Demo {
-
+	public static final Logger log = LogManager.getLogger(PrepareReportBuilder.class);
 	private static final String FILE_NAME = "src/main/resources/JobNames.txt";
-
+	private static PrepareReportBuilder jr = new PrepareReportBuilder();
+	
 	public static void main(String[] args) throws IOException {
-		
-		PrepareReportBuilder jr = new PrepareReportBuilder();
 		List<String> lines = Files.readAllLines(Paths.get(FILE_NAME));
 		
 		for (String jobName: lines) {
@@ -31,11 +33,11 @@ public class Demo {
 			}
 		}
 		if (JenkinsJobList.getInstance().getJenkinsJobList().isEmpty()) {
-			jr.log.info("Application Error. Information About jobs is Empty. Can't Run Excel Parser.\nApplication Closed");
+			log.info("Application Error. Information About jobs is Empty. Can't Run Excel Parser.\nApplication Closed");
 		} else {
-			jr.log.info("Start writing the result to Excel file: " + ReportNameMaker.get());
+			log.info("Start writing the result to Excel file: " + ReportNameMaker.get());
 			ExcelParser.getInstance().writeReportToExcel();
-			jr.log.info("Application close");
+			log.info("Application close");
 		}
 	}
 

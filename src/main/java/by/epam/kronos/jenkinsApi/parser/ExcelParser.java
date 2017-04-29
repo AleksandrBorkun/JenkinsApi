@@ -52,8 +52,7 @@ public class ExcelParser {
 			workBook.close();
 			writer.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.info("ERROR! Unknown Error! " + Arrays.toString(e.getStackTrace()));
 		} 
 	}
 
