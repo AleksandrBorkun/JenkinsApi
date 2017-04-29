@@ -1,7 +1,12 @@
 package by.epam.kronos.jenkinsApi.app;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 //import java.nio.file.Files;
 //import java.nio.file.Paths;
 //import java.util.List;
@@ -28,8 +33,14 @@ public class Demo {
 		
 		String [] lines = JOB_NAMES.split(" "); //Files.readAllLines(Paths.get(FILE_NAME));
 		for(String s: lines){
+			
 			File f = new File("D:/log.txt");
-			Files.copy((new File("src/main/resources/JobNames.txt")), f);
+			OutputStream os = new FileOutputStream(f);
+			OutputStreamWriter is = new OutputStreamWriter(os, "UTF-8");
+			is.write(s);
+			is.flush();
+			is.close();
+			//Files.copy((new File("src/main/resources/JobNames.txt")), f);
 			System.out.println(s);
 			log.info(s);
 		}
