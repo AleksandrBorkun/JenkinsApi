@@ -6,16 +6,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class MakeFileFromInputStream {
 
+public class MakeFileFromInputStream {
+/*
 	InputStream inputStream = null;
 	OutputStream outputStream = null;
 	String fullFileName = null;
 
 	public String convert(InputStream file, String fileName) {
-
+	
+		Files.createTempFile(prefix, suffix, attrs)
+Files.write(Paths.get(fileName), IOUtils.toByteArray(file));
+		
+		
 		try {
-			String fullFileName = "src/main/resources/" + fileName + ".html";
+			String fullFileName = "src/main/resources/" + fileName + ".html"; //!!
 			// read this file into InputStream
 			inputStream = file;
 
@@ -53,5 +58,5 @@ public class MakeFileFromInputStream {
 		}
 		return null;
 	}
-
+*/
 }

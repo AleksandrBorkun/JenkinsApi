@@ -10,7 +10,7 @@ public class JenkinsJobDetails {
 	private int totalTestsCount;
 	private int countOfFail;
 	private String jobName;
-	private List<TestSuiteFromJenkins> testSuiteList = new ArrayList();
+	private List<TestSuiteFromJenkins> testSuiteList = new ArrayList<>();
 
 	public String getJobName() {
 		return jobName;

@@ -8,7 +8,7 @@ public class TestSuiteFromJenkins {
 	private int countOfFailedTests;
 	private boolean status;
 	private String suiteName;
-	private List<TestCasesFromSuite> testCaseList = new ArrayList();
+	private List<TestCasesFromSuite> testCaseList = new ArrayList<>();
 	
 	
 	public boolean isStatus() {

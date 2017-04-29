@@ -1,10 +1,12 @@
 package by.epam.kronos.jenkinsApi.parser;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -17,21 +19,21 @@ import by.epam.kronos.jenkinsApi.entity.JenkinsJobDetails;
 import by.epam.kronos.jenkinsApi.entity.JenkinsJobList;
 import by.epam.kronos.jenkinsApi.entity.TestCasesFromSuite;
 import by.epam.kronos.jenkinsApi.entity.TestSuiteFromJenkins;
+import by.epam.kronos.jenkinsApi.job.PrepareReportBuilder;
 import by.epam.kronos.jenkinsApi.utils.ReportNameMaker;
 
 public class ExcelParser {
 
+	public static final Logger log = LogManager.getLogger(PrepareReportBuilder.class);
+	
 	private final static ExcelParser INSTANCE = new ExcelParser();
-
 	private final static HSSFWorkbook workBook = new HSSFWorkbook();
 	
 	private HSSFSheet sheet;
 	private HSSFRow row;
-
 	private HSSFCellStyle rowStyle = null;
 	private HSSFCellStyle persentageStyle = null;
 	private File fileWithReport;
-	private FileOutputStream writer;
 	private String titleSheet = "JobsReport";
 	private int titleRow = 0;
 
@@ -40,40 +42,34 @@ public class ExcelParser {
 	}
 
 	private ExcelParser() {
-
 	}
 
 	public void writeReportToExcel() {
-		
-		prepareForWriting();
+			prepareForWriting();
 
-		try {
-
-			writer = new FileOutputStream(createFile(ReportNameMaker.get()));
+		try (FileOutputStream writer = new FileOutputStream(createFile(ReportNameMaker.get()));){
 			workBook.write(writer);
-		} catch (FileNotFoundException e) {
-			parserTearDown();
-			e.printStackTrace();
+			workBook.close();
+			writer.close();
 		} catch (IOException e) {
-			parserTearDown();
+			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		finally{
-			parserTearDown();
-		}
-		
-
+		} 
 	}
 
 	private void prepareForWriting() {
-	
-		
+			
 		for (JenkinsJobDetails jobDetail : JenkinsJobList.getInstance().getJenkinsJobList()) {
+			String checkName = jobDetail.getJobName().substring((jobDetail.getJobName().length()-31), jobDetail.getJobName().length());
+			
+			if(workBook.getSheet(checkName)!=null){
+				log.info("Sorry! But sheet with name: '" + checkName + "' alredy exist! Report for Job: '" + jobDetail.getJobName() + "' will not created! But Don't Be Worry Maybe You just Duplicated The Job Name");
+				continue;
+			}
+				
 			
 			createSheet(titleSheet);
-			
-			createTitleHeader();
-																				//This code
+			createTitleHeader();												//This code
 			createRow(titleRow);												//Create title sheet
 			titleRow++;															// and write there 
 			createCell(0).setCellValue(jobDetail.getJobName());					//Job Name & Count of
@@ -84,7 +80,7 @@ public class ExcelParser {
 			
 			if(jobDetail.getCountOfFail() == 0)
 				continue;
-			createSheet(jobDetail.getJobName());											//
+			createSheet(jobDetail.getJobName());
 			createHeaderForJodDetailsSheet();												//
 			createNextRow();																// THIS CODE
 			createCell(0).setCellValue(jobDetail.getJobName());								//
@@ -130,12 +126,10 @@ public class ExcelParser {
 	}
 
 	private void createSheet(String jobName) {
-		
 		if (jobName.equals("JobsReport") && sheet != null) {
 			sheet = workBook.getSheet(jobName);
 			sheet.setColumnWidth(0, 19200); // 19200/256 = 75
 		}
-
 		else if(jobName.equals("JobsReport")){
 			sheet = workBook.createSheet(jobName);
 			sheet.setColumnWidth(0, 19200); // 19200/256 = 75
@@ -148,8 +142,7 @@ public class ExcelParser {
 		}
 	}
 
-	private void createTitleHeader(){
-		
+	private void createTitleHeader(){		
 		if(titleRow == 0){									
 			createRow(titleRow);							
 			createCell(0).setCellValue("Job Name");			//	THIS CODE 
@@ -166,26 +159,20 @@ public class ExcelParser {
 		}		
 	}
 	
-	private void createTitleFooter(){
-		
-		createSheet(titleSheet);
-				
-		createRow(titleRow);															//
-		
+	private void createTitleFooter(){	
+		createSheet(titleSheet);				
+		createRow(titleRow);															//		
 		createCell(0).setCellValue("Total Result");										//	Make a Total
-		getCell(0).setCellStyle(getBoldFont()); 										//	 Result report	
-		
+		getCell(0).setCellStyle(getBoldFont()); 										//	 Result report		
 		createCell(1).setCellFormula("SUM(B2:B"+row.getRowNum()+")");;	
 		getCell(1).setCellStyle(getColorStyle("red"));		
 		createCell(2).setCellFormula("SUM(C2:C"+row.getRowNum()+")");;	
 		getCell(2).setCellStyle(getColorStyle("blue"));
 		createCell(3).setCellFormula("SUM(D2:D"+row.getRowNum()+")");;	
 		getCell(3).setCellStyle(getColorStyle("green"));
-		createCell(4).setCellFormula("SUM(E2:E"+row.getRowNum()+")");	
-		
+		createCell(4).setCellFormula("SUM(E2:E"+row.getRowNum()+")");			
 		titleRow++; 																		
-		createRow(titleRow);
-		
+		createRow(titleRow);	
 		createCell(0).setCellValue("Result in Percent");
 		getCell(0).setCellStyle(getBoldFont());										//	 	
 		createCell(1).setCellFormula("(B"+row.getRowNum()+"/E"+row.getRowNum()+")");// Make a Total
@@ -195,60 +182,49 @@ public class ExcelParser {
 		createCell(3).setCellFormula("(D"+row.getRowNum()+"/E"+row.getRowNum()+")");													
 		getCell(3).setCellStyle(getPercentStyle());
 		createCell(4).setCellValue(1);													
-		getCell(4).setCellStyle(getPercentStyle());														
-	
-		
+		getCell(4).setCellStyle(getPercentStyle());															
 	}
 	
 	private void createHeaderForJodDetailsSheet(){
-		
 		createRow(0);
 		createCell(0).setCellValue("JobName/SuiteName/TestCaseName");
 		getCell(0).setCellStyle(getBoldFont());
 		createCell(1).setCellValue("Failed/Error log");
 		getCell(1).setCellStyle(getBoldFont());
-		
-		
-		
 	}
 	
  	private HSSFCellStyle getBoldFont(){
-		
 		if(rowStyle == null){
 		rowStyle = workBook.createCellStyle();
 		HSSFFont font = workBook.createFont();
 		font.setBold(true);
 		rowStyle.setFont(font);
 			}
-		
 		return rowStyle;
 	}
 	
 	private HSSFCellStyle getColorStyle(String color){
 	 HSSFCellStyle colorStyle = workBook.createCellStyle();
-		
 		HSSFFont font = workBook.createFont();
 		if(color.toUpperCase().equals("RED"))
-		font.setColor(font.COLOR_RED);
+		font.setColor(Font.COLOR_RED);
 		else if(color.toUpperCase().equals("GREEN"))
 			font.setColor((short)3);
 		else if(color.toUpperCase().equals("BLUE")){
 			font.setColor((short)4);
 		}
 		else{
-			font.setColor(font.COLOR_NORMAL);
+			font.setColor(Font.COLOR_NORMAL);
 		}
 		colorStyle.setFont(font);
 		return colorStyle;
 	}
 	
 	private HSSFCellStyle getPercentStyle(){
-		
 		if(persentageStyle == null){
 		persentageStyle = workBook.createCellStyle();
 		persentageStyle.setDataFormat(workBook.createDataFormat().getFormat("0.00%"));
 			}
-		
 		return persentageStyle;
 	}
 	
@@ -259,26 +235,6 @@ public class ExcelParser {
 		}
 		fileWithReport = new File(fileName);
 		return fileWithReport;
-
 	}
-
-	private void parserTearDown() {
-
-		if (writer != null) {
-			try {
-				writer.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-
-		if (workBook != null) {
-			try {
-				workBook.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-
-	}
+	
 }
