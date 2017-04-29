@@ -8,10 +8,10 @@
 		<profile>
 			<id>String_Parameters</id>
 			<properties>
-				<main.param>${env.JOB_NAMES}</main.param>
-				<main.param>${env.CASE_FOR_SKIP}</main.param>
-				<main.param>${env.BASE_URL}</main.param>
-				<main.param>${env.FILE_REPORT_NAME}</main.param>
+				<test.param>${env.JOB_NAMES}</test.param>
+				<test.param>${env.CASE_FOR_SKIP}</test.param>
+				<test.param>${env.BASE_URL}</test.param>
+				<test.param>${env.FILE_REPORT_NAME}</test.param>
 			</properties>
 		</profile>
 	</profiles>
