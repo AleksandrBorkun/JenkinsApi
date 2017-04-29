@@ -40,12 +40,14 @@ public class Demo {
 			OutputStream os = new FileOutputStream(f);
 			OutputStreamWriter is = new OutputStreamWriter(os, "UTF-8");
 			is.write(s);
+			is.write("Hello Worlds");
 			is.flush();
 			is.close();
 			//Files.copy((new File("src/main/resources/JobNames.txt")), f);
 			System.out.println(s);
 			log.info(s);
 		}
+		
 		
 	/*	for (String jobName: lines) {
 			String[] a = null;
