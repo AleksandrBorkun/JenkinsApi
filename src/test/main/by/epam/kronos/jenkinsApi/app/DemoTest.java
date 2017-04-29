@@ -24,7 +24,7 @@ import by.epam.kronos.jenkinsApi.parser.ExcelParser;
 import by.epam.kronos.jenkinsApi.property.PropertyProvider;
 import by.epam.kronos.jenkinsApi.utils.ReportNameMaker;
 
-public class Demo {
+public class DemoTest {
 	public static final Logger log = LogManager.getLogger(PrepareReportBuilder.class);
 //	private static final String FILE_NAME = "src/main/resources/JobNames.txt";
 	private static PrepareReportBuilder jr = new PrepareReportBuilder();
