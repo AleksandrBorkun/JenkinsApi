@@ -14,6 +14,7 @@ import java.io.Writer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.testng.annotations.Test;
 
 import com.google.common.io.Files;
 
@@ -29,7 +30,8 @@ public class Demo {
 	private static PrepareReportBuilder jr = new PrepareReportBuilder();
 	private static final String JOB_NAMES = PropertyProvider.getProperty("JOB_NAMES");
 	
-	public static void main(String[] args) throws IOException {
+	@Test
+	public void testOne() throws IOException {
 		
 		String [] lines = JOB_NAMES.split(" "); //Files.readAllLines(Paths.get(FILE_NAME));
 		for(String s: lines){
