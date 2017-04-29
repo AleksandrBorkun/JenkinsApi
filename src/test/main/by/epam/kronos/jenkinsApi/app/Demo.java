@@ -36,9 +36,12 @@ public class Demo {
 		String [] lines = JOB_NAMES.split(" "); //Files.readAllLines(Paths.get(FILE_NAME));
 		for(String s: lines){
 			
-			File f = new File("D:/log.txt");
+			File f = new File("log.txt");
 			OutputStream os = new FileOutputStream(f);
 			OutputStreamWriter is = new OutputStreamWriter(os, "UTF-8");
+			System.out.println(System.getProperty("JOB_NAMES"));
+			log.info("hello wooooorld");
+			System.out.println("hello woordjcv");
 			is.write(s);
 			is.write("Hello Worlds");
 			is.flush();
