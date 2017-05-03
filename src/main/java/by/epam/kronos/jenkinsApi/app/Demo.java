@@ -1,9 +1,5 @@
 package by.epam.kronos.jenkinsApi.app;
 
-//import java.nio.file.Files;
-//import java.nio.file.Paths;
-//import java.util.List;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import by.epam.kronos.jenkinsApi.entity.JenkinsJobList;
@@ -14,15 +10,12 @@ import by.epam.kronos.jenkinsApi.utils.ReportNameMaker;
 
 public class Demo {
 	public static final Logger log = LogManager.getLogger(PrepareReportBuilder.class);
-	// private static final String FILE_NAME =
-	// "src/main/resources/JobNames.txt";
 	private static PrepareReportBuilder jr = new PrepareReportBuilder();
 	private static final String JOB_NAMES = PropertyProvider.getProperty("JOB_NAMES");
 
 	public static void main(String[] args) {
 
-		String[] lines = JOB_NAMES.split(" "); // Files.readAllLines(Paths.get(FILE_NAME));
-
+		String[] lines = JOB_NAMES.split(" "); 
 		for (String jobName : lines) {
 			String[] a = null;
 			if (jobName.contains("/")) {
@@ -34,13 +27,18 @@ public class Demo {
 				jr.makeReport(jobName);
 			}
 		}
+		try{
 		if (JenkinsJobList.getInstance().getJenkinsJobList().isEmpty()) {
 			log.info("Application Error. Information About jobs is Empty. Can't Run Excel Parser.\nApplication Closed");
 		} else {
 			log.info("Start writing the result to Excel file: " + ReportNameMaker.get());
 			ExcelParser.getInstance().writeReportToExcel();
 			log.info("Application close");
+		}}
+		catch(RuntimeException e){
+			log.info("UNKNOWN ERROR! CHECK THE ALL PARAMETERS IN JOB OR YOU CONNECTION WITH KATE!" );
 		}
+		
 	}
 
 }

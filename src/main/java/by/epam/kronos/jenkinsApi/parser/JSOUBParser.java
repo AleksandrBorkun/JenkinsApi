@@ -70,7 +70,9 @@ public class JSOUBParser {
 					}
 				}
 			}
+			if(testSuite != null)
 			testSuite.setCountOfFailedTests(countOfFailedTestsInSuite);
+		
 			jobDet.setCountOfFail(countOfFailedTests);
 			jobDet.addTestSuiteToList(testSuite);
 			jobDet.setCountOfSkip(countOfSkipedTests);

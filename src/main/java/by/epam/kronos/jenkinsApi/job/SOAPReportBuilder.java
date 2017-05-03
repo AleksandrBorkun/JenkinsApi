@@ -19,7 +19,7 @@ import by.epam.kronos.jenkinsApi.property.PropertyProvider;
 public class SOAPReportBuilder {
 
 	public static final Logger log = LogManager.getLogger(PrepareReportBuilder.class);
-
+	private static final String CASE_FOR_SKIP = PropertyProvider.getProperty("TESTS_FOR_SKIP");
 	private static final String BASE_URL = PropertyProvider.getProperty("BASE_URL");
 	private JenkinsJobDetails jobDetails = new JenkinsJobDetails();
 	private TestCasesFromSuite testCaseDetail;
@@ -62,12 +62,11 @@ public class SOAPReportBuilder {
 	private void getCountOfAllTestsInJob(TestChildReport testReport) {
 
 		for (TestSuites testSuite : testReport.getResult().getSuites()) {
-			if (testSuite.getName().contains("DSL") || testSuite.getName().contains("SetUp")) {
+			if (checkSuiteForSkip(testSuite)) {
 				continue;
 			}
 			for (TestCase caseCount : testSuite.getCases()) {
-				if (caseCount.getName().toUpperCase().contains("DSL")
-						|| caseCount.getName().toUpperCase().contains("SETUP"))
+				if (checkCaseForSkip(caseCount))
 					continue;
 				if (caseCount.isSkipped()) {
 					countOfSkiped++;
@@ -99,33 +98,16 @@ public class SOAPReportBuilder {
 			if (testReport.getResult().getFailCount() == 0) {
 				continue;
 			}
-			for (TestSuites testSuite : testReport.getResult().getSuites()) {
-				for (String checkName : PropertyProvider.getProperty("TESTS_FOR_SKIP").split("/")) {
-					if (testSuite.getName().toUpperCase().contains(checkName.toUpperCase())) { //
-						isSkipSuitePresent = true; //
-						break; // This code
-					} // check the suite name
-				} // and skip it
-					// if this name
-				if (isSkipSuitePresent) { // contains in property file
-					isSkipSuitePresent = false; //
-					continue; //
+			for (TestSuites testSuite : testReport.getResult().getSuites()) {																			
+				if (checkSuiteForSkip(testSuite)) {											
+					continue; 																	
 				}
 				int count = 0;
 				testSuiteDetail = new TestSuiteFromJenkins();
-
 				for (TestCase testCase : testSuite.getCases()) {
 					testCaseDetail = null;
-					for (String checkName : PropertyProvider.getProperty("TESTS_FOR_SKIP").split("/")) {
-						if (testCase.getName().toUpperCase().contains(checkName.toUpperCase())) { //
-							isSkipSuitePresent = true; //
-							break; // This code
-						} // check the testCase name
-					} // and skip it
-						// if this name
-					if (isSkipSuitePresent) { // contains in property file
-						isSkipSuitePresent = false; //
-						continue; //
+					if (checkCaseForSkip(testCase)) {											
+						continue; 																	
 					}
 					if (testCase.getErrorDetails() == null) {
 						continue;
@@ -149,4 +131,27 @@ public class SOAPReportBuilder {
 
 	}
 
+	private boolean checkSuiteForSkip(TestSuites testSuite){
+		isSkipSuitePresent=false;
+		if(!CASE_FOR_SKIP.equals("None")){
+		for (String checkName : CASE_FOR_SKIP.split("/")) {
+			if (testSuite.getName().toUpperCase().contains(checkName.toUpperCase())) { // This code
+				isSkipSuitePresent = true; 												// check the suite name
+				break; 																	// and skip it
+			} 																			// if this name
+		}}								 												// contains in property file		
+		return isSkipSuitePresent;
+	}
+	
+	private boolean checkCaseForSkip(TestCase testCase){
+		isSkipSuitePresent = false;
+		if(!CASE_FOR_SKIP.equals("None")){
+		for (String checkName : CASE_FOR_SKIP.split("/")) {
+			if (testCase.getName().toUpperCase().contains(checkName.toUpperCase())) { 	// This code
+				isSkipSuitePresent = true; 												// check the testCase name
+				break; 																	// and skip it
+			} 																			// if this name
+		}} 																				// contains in property file
+		return isSkipSuitePresent;
+	}
 }
