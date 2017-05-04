@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.offbytwo.jenkins.JenkinsServer;
+import com.offbytwo.jenkins.model.Job;
 import com.offbytwo.jenkins.model.TestChildReport;
 
 import by.epam.kronos.jenkinsApi.property.PropertyProvider;
@@ -28,8 +29,14 @@ public class PrepareReportBuilder {
 			log.info("Try to find Jenkins Server by BASE URL: " + BASE_URL);
 			jenkins = new JenkinsServer(URI.create(BASE_URL));
 		}
-
+		
 		try {
+			if(jenkins.getJob(jobName).getUpstreamProjects().size()!=0){
+				log.info("This is a multi job '" + jobName + "' Go to find the result of each jobs");
+				for(Job simpleJob: jenkins.getJob(jobName).getUpstreamProjects()){
+					makeReport(simpleJob.getName());
+				}	
+			}
 			// here we launch latest SOAP report
 			log.info("try to find job by Name " + jobName);
 			List<TestChildReport> testReportList = jenkins.getJob(jobName).getLastCompletedBuild().getTestReport()
@@ -53,6 +60,12 @@ public class PrepareReportBuilder {
 			jenkins = new JenkinsServer(URI.create(BASE_URL));
 		}
 		try {
+			if(jenkins.getJob(jobName).getUpstreamProjects().size()!=0){
+				log.info("This is a multi job '" + jobName + "' Go to find the result of each jobs");
+				for(Job simpleJob: jenkins.getJob(jobName).getUpstreamProjects()){
+					makeReport(simpleJob.getName());
+				}	
+			}
 			// here we launch SOAP report by build number
 			log.info("try to find job by Name " + jobName + "#" + buildNumber);
 			List<TestChildReport> testReportList = jenkins.getJob(jobName)
@@ -68,4 +81,5 @@ public class PrepareReportBuilder {
 			log.info("The Job Name: " + jobName + " Does Not exist:\n" + Arrays.toString(e1.getStackTrace()));
 		}
 	}
+	
 }
