@@ -23,49 +23,37 @@ public class PrepareReportBuilder {
 	private NoSOAPReportBuilder noSoapReport;
 	private static final String BASE_URL = PropertyProvider.getProperty("BASE_URL");
 
-	public void makeReport(String jobName) {
+	public void startPrepearing(String jobName, String buildNumber){
 
 		if (jenkins == null) {
 			log.info("Try to find Jenkins Server by BASE URL: " + BASE_URL);
 			jenkins = new JenkinsServer(URI.create(BASE_URL));
 		}
-		
-		try {
-			if(jenkins.getJob(jobName).getUpstreamProjects().size()!=0){
-				log.info("This is a multi job '" + jobName + "' Go to find the result of each jobs");
-				for(Job simpleJob: jenkins.getJob(jobName).getUpstreamProjects()){
-					makeReport(simpleJob.getName());
-				}	
+
+			try {
+				if(jenkins.getJob(jobName).getUpstreamProjects().size()!=0){
+					log.info("This is a multi job '" + jobName + "' Go to find the result of each jobs");
+					for(Job simpleJob: jenkins.getJob(jobName).getUpstreamProjects()){
+						makeReport(simpleJob.getName());
+					}	
+				}
+				else{
+					if(buildNumber!=null){
+						makeReport(jobName, buildNumber);
+					}
+					else{
+						makeReport(jobName);
+					}
+				}
+			} catch (IOException e) {
+					log.info("Something was wrong. Can't find the job name: '" + jobName + "' try it again /n"+Arrays.toString(e.getStackTrace()));
 			}
-			// here we launch latest SOAP report
-			log.info("try to find job by Name " + jobName);
-			List<TestChildReport> testReportList = jenkins.getJob(jobName).getLastCompletedBuild().getTestReport()
-					.getChildReports();
-			log.info("Go to SOAP Report Builder to prepare report");
-			soapReport = new SOAPReportBuilder();
-			soapReport.makeReport(jobName, testReportList);
-		} catch (IOException e1) { 											
-			log.info("Go to NO_SOAP_UI Report Builder find job");		//
-			noSoapReport = new NoSOAPReportBuilder();					// here we launch No SOAP Report
-			noSoapReport.makeReportFromNotSOAPJob(jobName, jenkins);	//
-		} catch (NullPointerException e1) {
-			log.info("The Job Name: " + jobName + " Does Not exist:\n" + Arrays.toString(e1.getStackTrace()));
-		}
 	}
 
-	public void makeReport(String jobName, String buildNumber) {
+	private void makeReport(String jobName, String buildNumber) {
 
-		if (jenkins == null) {
-			log.info("Try to find Jenkins Server by BASE URL: " + BASE_URL);
-			jenkins = new JenkinsServer(URI.create(BASE_URL));
-		}
 		try {
-			if(jenkins.getJob(jobName).getUpstreamProjects().size()!=0){
-				log.info("This is a multi job '" + jobName + "' Go to find the result of each jobs");
-				for(Job simpleJob: jenkins.getJob(jobName).getUpstreamProjects()){
-					makeReport(simpleJob.getName());
-				}	
-			}
+
 			// here we launch SOAP report by build number
 			log.info("try to find job by Name " + jobName + "#" + buildNumber);
 			List<TestChildReport> testReportList = jenkins.getJob(jobName)
@@ -80,6 +68,28 @@ public class PrepareReportBuilder {
 		} catch (NullPointerException e1) {
 			log.info("The Job Name: " + jobName + " Does Not exist:\n" + Arrays.toString(e1.getStackTrace()));
 		}
+	}
+	
+	private void makeReport(String jobName){
+		
+		try {
+
+			// here we launch latest SOAP report
+			log.info("try to find job by Name " + jobName);
+			List<TestChildReport> testReportList = jenkins.getJob(jobName).getLastCompletedBuild().getTestReport()
+					.getChildReports();
+			log.info("Go to SOAP Report Builder to prepare report");
+			soapReport = new SOAPReportBuilder();
+			soapReport.makeReport(jobName, testReportList);
+		} catch (IOException e1) { 											
+			log.info("Go to NO_SOAP_UI Report Builder find job");		//
+			noSoapReport = new NoSOAPReportBuilder();					// here we launch No SOAP Report
+			noSoapReport.makeReportFromNotSOAPJob(jobName, jenkins);	//
+		} catch (NullPointerException e1) {
+			log.info("The Job Name: " + jobName + " Does Not exist:\n" + Arrays.toString(e1.getStackTrace()));
+		}
+		
+		
 	}
 	
 }

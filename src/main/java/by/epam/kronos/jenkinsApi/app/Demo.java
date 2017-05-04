@@ -12,19 +12,25 @@ public class Demo {
 	public static final Logger log = LogManager.getLogger(PrepareReportBuilder.class);
 	private static PrepareReportBuilder jr = new PrepareReportBuilder();
 	private static final String JOB_NAMES = PropertyProvider.getProperty("JOB_NAMES");
+	private static String jobName;
+	private static String buildNumber;
 
 	public static void main(String[] args) {
 
 		String[] lines = JOB_NAMES.split(" "); 
-		for (String jobName : lines) {
-			String[] a = null;
-			if (jobName.contains("/")) {
-				a = jobName.split("/");
+		for (String currentJobName : lines) {
+			String[] jobList = null;
+			if (currentJobName.contains("/")) {
+				jobList = currentJobName.split("/");
 			}
-			if (a != null) {
-				jr.makeReport(a[0], a[1]);
+			if (jobList != null) {
+				jobName = jobList[0];
+				buildNumber = jobList[1];
+				jr.startPrepearing(jobName, buildNumber);
 			} else {
-				jr.makeReport(jobName);
+				jobName = currentJobName;
+				buildNumber = null;
+				jr.startPrepearing(jobName, buildNumber);
 			}
 		}
 		try{
