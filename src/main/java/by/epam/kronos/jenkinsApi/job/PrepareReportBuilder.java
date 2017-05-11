@@ -31,7 +31,7 @@ public class PrepareReportBuilder {
 		}
 
 			try {
-				if(jenkins.getJob(jobName).getUpstreamProjects().size()!=0){
+				if(jenkins.getJob(jobName).getDownstreamProjects().size()!=0){
 					log.info("This is a multi job '" + jobName + "' Go to find the result of each jobs");
 					for(Job simpleJob: jenkins.getJob(jobName).getDownstreamProjects()){
 						if(!simpleJob.getName().equals("KATE_Report_Builder"))
