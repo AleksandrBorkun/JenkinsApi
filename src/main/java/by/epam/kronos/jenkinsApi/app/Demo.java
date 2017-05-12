@@ -20,8 +20,8 @@ public class Demo {
 		String[] lines = JOB_NAMES.split(" "); 
 		for (String currentJobName : lines) {
 			String[] jobList = null;
-			if (currentJobName.contains("/")) {
-				jobList = currentJobName.split("/");
+			if (currentJobName.contains("#")) {
+				jobList = currentJobName.split("#");
 			}
 			if (jobList != null) {
 				jobName = jobList[0];
