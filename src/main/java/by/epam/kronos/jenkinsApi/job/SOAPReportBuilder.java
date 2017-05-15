@@ -27,11 +27,12 @@ public class SOAPReportBuilder {
 	private int allTestsFailedInJob = 0;
 	private int totalJobTests = 0;
 	private int countOfSkiped = 0;
+	private int duration = 0;
 	// private int countOfPassedTests;
 	private boolean isSkipSuitePresent = false;
 
 	public void makeReport(String jobName, List<TestChildReport> testReportList) {
-
+		
 		makeAllJobPlease(jobName, testReportList);
 
 		jobDetails.setJobName(jobName);
@@ -60,7 +61,7 @@ public class SOAPReportBuilder {
 	}
 
 	private void getCountOfAllTestsInJob(TestChildReport testReport) {
-
+		
 		for (TestSuites testSuite : testReport.getResult().getSuites()) {
 			if (checkSuiteForSkip(testSuite)) {
 				continue;
@@ -84,12 +85,13 @@ public class SOAPReportBuilder {
 	}
 
 	private void makeAllJobPlease(String jobName, List<TestChildReport> testReportList) {
-
+		
 		for (TestChildReport testReport : testReportList) {
 			try {
 				getCountOfAllTestsInJob(testReport); // count of all and count
 														// of skiped adding to
 														// JobDetails
+				duration = duration +  (int)testReport.getResult().getDuration();
 			} catch (RuntimeException e) {
 				log.info("Broken Job Report Please Look Details here: " + BASE_URL + "/job/" + jobName);
 				log.info(Arrays.toString(e.getStackTrace()));
@@ -121,12 +123,14 @@ public class SOAPReportBuilder {
 					}
 				}
 				if (count != 0) {
+					jobDetails.setJobDuration(duration);
 					testSuiteDetail.setSuiteName(testSuite.getName());
 					testSuiteDetail.setCountOfFailedTests(count);
 					jobDetails.addTestSuiteToList(testSuiteDetail);
+					duration=0;
 				}
 			}
-
+			
 		}
 
 	}

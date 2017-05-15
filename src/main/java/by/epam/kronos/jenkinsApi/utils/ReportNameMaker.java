@@ -24,5 +24,13 @@ public class ReportNameMaker {
 		return reportFileName;
 
 	}
+	
+	public static String durationConvert(int duration){
+		int hours = duration/3600000;
+		int minutes = duration/60000 - hours*60;
+		int sec = duration/1000 - hours*3600 - minutes*60;
+		int mSec = duration%1000;
+		return (new String(hours+":"+minutes+":"+sec+":"+mSec));
+	}
 
 }

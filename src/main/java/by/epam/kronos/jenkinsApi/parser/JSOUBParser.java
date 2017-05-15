@@ -21,7 +21,7 @@ public class JSOUBParser {
 
 	public static final Logger log = LogManager.getLogger(PrepareReportBuilder.class);
 	
-	public static void parseHTMLAndAddResultToJenkinsJobList(InputStream iStream, String jobName) {
+	public static void parseHTMLAndAddResultToJenkinsJobList(InputStream iStream, String jobName, int duration) {
 
 		
 		JenkinsJobDetails jobDet = null;
@@ -72,7 +72,7 @@ public class JSOUBParser {
 			}
 			if(testSuite != null)
 			testSuite.setCountOfFailedTests(countOfFailedTestsInSuite);
-		
+			jobDet.setJobDuration(duration);
 			jobDet.setCountOfFail(countOfFailedTests);
 			jobDet.addTestSuiteToList(testSuite);
 			jobDet.setCountOfSkip(countOfSkipedTests);

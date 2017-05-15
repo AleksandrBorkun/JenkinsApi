@@ -20,10 +20,11 @@ public class NoSOAPReportBuilder {
 
 		try {
 			String url = jenkins.getJob(jobName).getBuildByNumber(Integer.parseInt(buildNumber)).getUrl();
+			int duration = (int)jenkins.getJob(jobName).getBuildByNumber(Integer.parseInt(buildNumber)).details().getDuration();
 			InputStream file = jenkins.getJob(jobName).getBuildByNumber(Integer.parseInt(buildNumber)).getClient()
 					.getFile(URI.create(url + PropertyProvider.getProperty("ARTIFACT_URL")));
 			log.info("Start to make a report for job: " + jobName);
-			JSOUBParser.parseHTMLAndAddResultToJenkinsJobList(file, jobName);
+			JSOUBParser.parseHTMLAndAddResultToJenkinsJobList(file, jobName, duration);
 		} catch (IOException e) {
 			log.info("problem with connect:\n" + Arrays.toString(e.getStackTrace()));
 		}
@@ -33,10 +34,11 @@ public class NoSOAPReportBuilder {
 
 		try {
 			String url = jenkins.getJob(jobName).getLastCompletedBuild().getUrl();
+			int duration = (int)jenkins.getJob(jobName).getLastCompletedBuild().details().getDuration();
 			InputStream file = jenkins.getJob(jobName).getLastBuild().getClient()
 					.getFile(URI.create(url + PropertyProvider.getProperty("ARTIFACT_URL")));
 			log.info("Start to make a report for job: " + jobName);
-			JSOUBParser.parseHTMLAndAddResultToJenkinsJobList(file, jobName);
+			JSOUBParser.parseHTMLAndAddResultToJenkinsJobList(file, jobName, duration);
 		} catch (IOException e) {
 			log.info("problem with connect:\n" + Arrays.toString(e.getStackTrace()));
 		}

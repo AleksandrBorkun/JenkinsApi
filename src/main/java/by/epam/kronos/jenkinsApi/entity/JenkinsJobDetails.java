@@ -9,6 +9,7 @@ public class JenkinsJobDetails {
 	private int countOfSkip;
 	private int totalTestsCount;
 	private int countOfFail;
+	private int jobDuration;
 	private String jobName;
 	private List<TestSuiteFromJenkins> testSuiteList = new ArrayList<>();
 
@@ -60,4 +61,13 @@ public class JenkinsJobDetails {
 		this.countOfSkip = countOfSkip;
 	}
 
+	public int getJobDuration() {
+		return jobDuration;
+	}
+
+	public void setJobDuration(int duration) {
+		this.jobDuration = duration;
+	}
+
+	
 }

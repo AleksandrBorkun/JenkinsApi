@@ -76,6 +76,7 @@ public class ExcelParser {
 			createCell(2).setCellValue(jobDetail.getCountOfSkip());				// Skip
 			createCell(3).setCellValue(jobDetail.getCountOfPass());				// Pass
 			createCell(4).setCellValue(jobDetail.getTotalTestsCount());			//& total tests
+			createCell(5).setCellValue(ReportNameMaker.durationConvert(jobDetail.getJobDuration()));
 			
 			if(jobDetail.getCountOfFail() == 0)
 				continue;
@@ -153,7 +154,9 @@ public class ExcelParser {
 			createCell(3).setCellValue("Passed");			
 			getCell(3).setCellStyle(getBoldFont());	
 			createCell(4).setCellValue("Total");
-			getCell(4).setCellStyle(getBoldFont());		
+			getCell(4).setCellStyle(getBoldFont());	
+			createCell(5).setCellValue("Duration");
+			getCell(5).setCellStyle(getBoldFont());	
 			titleRow++;
 		}		
 	}
@@ -169,7 +172,10 @@ public class ExcelParser {
 		getCell(2).setCellStyle(getColorStyle("blue"));
 		createCell(3).setCellFormula("SUM(D2:D"+row.getRowNum()+")");;	
 		getCell(3).setCellStyle(getColorStyle("green"));
-		createCell(4).setCellFormula("SUM(E2:E"+row.getRowNum()+")");			
+		createCell(4).setCellFormula("SUM(E2:E"+row.getRowNum()+")");
+		getCell(4).setCellStyle(getBoldFont());
+		createCell(5).setCellFormula("SUM(F2:F"+row.getRowNum()+")");
+		getCell(5).setCellStyle(getBoldFont());
 		titleRow++; 																		
 		createRow(titleRow);	
 		createCell(0).setCellValue("Result in Percent");
