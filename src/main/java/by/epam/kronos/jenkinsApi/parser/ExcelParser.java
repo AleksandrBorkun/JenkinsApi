@@ -36,6 +36,7 @@ public class ExcelParser {
 	private File fileWithReport;
 	private String titleSheet = "JobsReport";
 	private int titleRow = 0;
+	private int totalDuration = 0;
 
 	public static ExcelParser getInstance() {
 		return INSTANCE;
@@ -60,7 +61,7 @@ public class ExcelParser {
 			
 		for (JenkinsJobDetails jobDetail : JenkinsJobList.getInstance().getJenkinsJobList()) {
 			String checkName = jobDetail.getJobName().substring((jobDetail.getJobName().length()-31), jobDetail.getJobName().length());
-			
+			totalDuration = totalDuration + jobDetail.getJobDuration(); 
 			if(workBook.getSheet(checkName)!=null){
 				log.info("Sorry! But sheet with name: '" + checkName + "' alredy exist! Report for Job: '" + jobDetail.getJobName() + "' will not created! But Don't Be Worry Maybe You just Duplicated The Job Name");
 				continue;
@@ -174,7 +175,7 @@ public class ExcelParser {
 		getCell(3).setCellStyle(getColorStyle("green"));
 		createCell(4).setCellFormula("SUM(E2:E"+row.getRowNum()+")");
 		getCell(4).setCellStyle(getBoldFont());
-		createCell(5).setCellFormula("SUM(F2:F"+row.getRowNum()+")");
+		createCell(5).setCellValue(ReportNameMaker.durationConvert(totalDuration));
 		getCell(5).setCellStyle(getBoldFont());
 		titleRow++; 																		
 		createRow(titleRow);	

@@ -27,11 +27,10 @@ public class SOAPReportBuilder {
 	private int allTestsFailedInJob = 0;
 	private int totalJobTests = 0;
 	private int countOfSkiped = 0;
-	private int duration = 0;
 	// private int countOfPassedTests;
 	private boolean isSkipSuitePresent = false;
 
-	public void makeReport(String jobName, List<TestChildReport> testReportList) {
+	public void makeReport(String jobName, List<TestChildReport> testReportList, int duration) {
 		
 		makeAllJobPlease(jobName, testReportList);
 
@@ -41,10 +40,11 @@ public class SOAPReportBuilder {
 			jobDetails.setJobName(jobName);
 		}
 		jobDetails.setCountOfPass(totalJobTests - (countOfSkiped + allTestsFailedInJob));
+		jobDetails.setJobDuration(duration);
 		JenkinsJobList.getInstance().addJenkinsJobToList(jobDetails);
 	}
 
-	public void makeReport(String jobName, String buildNumber, List<TestChildReport> testReportList) {
+	public void makeReport(String jobName, String buildNumber, List<TestChildReport> testReportList, int duration) {
 
 		makeAllJobPlease(jobName, testReportList);
 
@@ -55,7 +55,7 @@ public class SOAPReportBuilder {
 		}
 
 		jobDetails.setCountOfPass(totalJobTests - (countOfSkiped + allTestsFailedInJob));
-
+		jobDetails.setJobDuration(duration);
 		JenkinsJobList.getInstance().addJenkinsJobToList(jobDetails);
 
 	}
@@ -91,7 +91,6 @@ public class SOAPReportBuilder {
 				getCountOfAllTestsInJob(testReport); // count of all and count
 														// of skiped adding to
 														// JobDetails
-				duration = duration +  (int)testReport.getResult().getDuration();
 			} catch (RuntimeException e) {
 				log.info("Broken Job Report Please Look Details here: " + BASE_URL + "/job/" + jobName);
 				log.info(Arrays.toString(e.getStackTrace()));
@@ -130,8 +129,7 @@ public class SOAPReportBuilder {
 			}
 			
 		}
-		jobDetails.setJobDuration(duration);
-		duration=0;
+
 	}
 
 	private boolean checkSuiteForSkip(TestSuites testSuite){

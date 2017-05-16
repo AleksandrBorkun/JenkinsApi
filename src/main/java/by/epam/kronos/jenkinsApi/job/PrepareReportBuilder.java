@@ -53,16 +53,16 @@ public class PrepareReportBuilder {
 	}
 
 	private void makeReport(String jobName, String buildNumber) {
-
+		
 		try {
-
+			int duration = (int)jenkins.getJob(jobName).getBuildByNumber(Integer.parseInt(buildNumber)).details().getDuration();
 			// here we launch SOAP report by build number
 			log.info("try to find job by Name " + jobName + "#" + buildNumber);
 			List<TestChildReport> testReportList = jenkins.getJob(jobName)
 					.getBuildByNumber(Integer.parseInt(buildNumber)).getTestReport().getChildReports();
 			log.info("Go to SOAP Report Builder to prepare report");
 			soapReport = new SOAPReportBuilder();
-			soapReport.makeReport(jobName, buildNumber, testReportList);
+			soapReport.makeReport(jobName, buildNumber, testReportList, duration);
 		} catch (IOException e1) { 												
 			log.info("Go to NO_SOAP_UI Report Builder find job");					//
 			noSoapReport = new NoSOAPReportBuilder();								// here we launch No SOAP Report
@@ -75,14 +75,14 @@ public class PrepareReportBuilder {
 	private void makeReport(String jobName){
 		
 		try {
-
+			int duration = (int)jenkins.getJob(jobName).getLastCompletedBuild().details().getDuration();
 			// here we launch latest SOAP report
 			log.info("try to find job by Name " + jobName);
 			List<TestChildReport> testReportList = jenkins.getJob(jobName).getLastCompletedBuild().getTestReport()
 					.getChildReports();
 			log.info("Go to SOAP Report Builder to prepare report");
 			soapReport = new SOAPReportBuilder();
-			soapReport.makeReport(jobName, testReportList);
+			soapReport.makeReport(jobName, testReportList, duration);
 		} catch (IOException e1) { 											
 			log.info("Go to NO_SOAP_UI Report Builder find job");		//
 			noSoapReport = new NoSOAPReportBuilder();					// here we launch No SOAP Report

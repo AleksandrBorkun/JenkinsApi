@@ -30,7 +30,7 @@ public class ReportNameMaker {
 		int minutes = duration/60000 - hours*60;
 		int sec = duration/1000 - hours*3600 - minutes*60;
 		int mSec = duration%1000;
-		return (new String(hours+":"+minutes+":"+sec+":"+mSec));
+		return (new String(hours+"h:"+minutes+"m:"+sec+"s:"+mSec+"ms"));
 	}
 
 }
