@@ -31,6 +31,7 @@ public class PrepareReportBuilder {
 		}
 
 			try {
+				log.info("Try to find " + jobName);
 				if(jenkins.getJob(jobName).getDownstreamProjects().size()!=0){
 					log.info("This is a multi job '" + jobName + "' Go to find the result of each jobs");
 					for(Job simpleJob: jenkins.getJob(jobName).getDownstreamProjects()){

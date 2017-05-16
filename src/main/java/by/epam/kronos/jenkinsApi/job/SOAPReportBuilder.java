@@ -123,16 +123,15 @@ public class SOAPReportBuilder {
 					}
 				}
 				if (count != 0) {
-					jobDetails.setJobDuration(duration);
 					testSuiteDetail.setSuiteName(testSuite.getName());
 					testSuiteDetail.setCountOfFailedTests(count);
 					jobDetails.addTestSuiteToList(testSuiteDetail);
-					duration=0;
 				}
 			}
 			
 		}
-
+		jobDetails.setJobDuration(duration);
+		duration=0;
 	}
 
 	private boolean checkSuiteForSkip(TestSuites testSuite){
