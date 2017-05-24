@@ -1,5 +1,7 @@
 package by.epam.kronos.jenkinsApi.app;
 
+import java.util.Arrays;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import by.epam.kronos.jenkinsApi.entity.JenkinsJobList;
@@ -17,7 +19,7 @@ public class Demo {
 
 	public static void main(String[] args) {
 
-		String[] lines = JOB_NAMES.split(" "); 
+		String[] lines = JOB_NAMES.split(","); 
 		for (String currentJobName : lines) {
 			String[] jobList = null;
 			if (currentJobName.contains("#")) {
@@ -42,7 +44,7 @@ public class Demo {
 			log.info("Application close");
 		}}
 		catch(RuntimeException e){
-			log.info("UNKNOWN ERROR! CHECK THE ALL PARAMETERS IN JOB OR YOU CONNECTION WITH KATE!" );
+			log.info("UNKNOWN ERROR! CHECK THE ALL PARAMETERS IN JOB OR YOU CONNECTION WITH KATE!" +Arrays.toString(e.getStackTrace()));
 		}
 		
 	}

@@ -98,8 +98,15 @@ public class ExcelParser {
 				for (TestCasesFromSuite testCase : testSuite.getTestCaseList()) {			//
 																							//
 					createNextRow();														//  FOR WRITE IT
-					createCell(0).setCellValue(testCase.getTestCaseName());					//	TO EXCEL FILE
-					createCell(1).setCellValue(testCase.getErrorLog());						//
+					createCell(0).setCellValue(testCase.getTestCaseName());
+					try{
+					
+					createCell(1).setCellValue(testCase.getErrorLog());	}
+					catch(RuntimeException e){
+						String s = testCase.getErrorLog();
+						log.info("Some Error with STRING in ERROR LOG!!! Find The case error manualy here: " + testCase.getTestCaseName());
+						createCell(1).setCellValue(testCase.getTestCaseName());	//
+					}
 				}
 			}
 		}
