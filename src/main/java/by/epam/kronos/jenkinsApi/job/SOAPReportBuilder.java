@@ -115,7 +115,9 @@ public class SOAPReportBuilder {
 					} else {
 						testCaseDetail = new TestCasesFromSuite();
 						testCaseDetail.setTestCaseName(testCase.getName());
+						if(testCase.getErrorStackTrace().length() < 32000)
 						testCaseDetail.setErrorLog(testCase.getErrorStackTrace());
+						else	testCaseDetail.setErrorLog(testCase.getErrorDetails());
 						count++;
 						allTestsFailedInJob++;
 						testSuiteDetail.addTestCaseToList(testCaseDetail);
