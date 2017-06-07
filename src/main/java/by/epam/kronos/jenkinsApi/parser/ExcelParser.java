@@ -28,7 +28,6 @@ public class ExcelParser {
 	
 	private final static ExcelParser INSTANCE = new ExcelParser();
 	private final static HSSFWorkbook workBook = new HSSFWorkbook();
-	
 	private HSSFSheet sheet;
 	private HSSFRow row;
 	private HSSFCellStyle rowStyle = null;
@@ -60,7 +59,12 @@ public class ExcelParser {
 	private void prepareForWriting() {
 			
 		for (JenkinsJobDetails jobDetail : JenkinsJobList.getInstance().getJenkinsJobList()) {
-			String checkName = jobDetail.getJobName().substring((jobDetail.getJobName().length()-31), jobDetail.getJobName().length());
+			String checkName;
+			if(jobDetail.getJobName().length() > 31){
+			checkName = jobDetail.getJobName().substring((jobDetail.getJobName().length()-31), jobDetail.getJobName().length());}
+			else{
+				checkName = jobDetail.getJobName();
+			}
 			totalDuration = totalDuration + jobDetail.getJobDuration(); 
 			if(workBook.getSheet(checkName)!=null){
 				log.info("Sorry! But sheet with name: '" + checkName + "' alredy exist! Report for Job: '" + jobDetail.getJobName() + "' will not created! But Don't Be Worry Maybe You just Duplicated The Job Name");
@@ -81,7 +85,7 @@ public class ExcelParser {
 			
 			if(jobDetail.getCountOfFail() == 0)
 				continue;
-			createSheet(jobDetail.getJobName());
+			createSheet(checkName);
 			createHeaderForJodDetailsSheet();												//
 			createNextRow();																// THIS CODE
 			createCell(0).setCellValue(jobDetail.getJobName());								//
@@ -143,7 +147,8 @@ public class ExcelParser {
 			sheet.setColumnWidth(0, 19200); // 19200/256 = 75
 		}
 		else{
-			jobName = jobName.substring((jobName.length()-31), jobName.length());
+
+			//jobName = jobName.substring((jobName.length()-31), jobName.length());
 			sheet = workBook.createSheet(jobName);
 			sheet.setColumnWidth(0, 19200); // 19200/256 = 75
 			sheet.setColumnWidth(1, 19200); // 19200/256 = 75
