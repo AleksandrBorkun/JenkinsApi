@@ -1,5 +1,6 @@
 package by.epam.kronos.jenkinsApi.app;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 import org.apache.logging.log4j.LogManager;
@@ -15,9 +16,9 @@ public class Demo {
 	private static PrepareReportBuilder jr = new PrepareReportBuilder();
 	private static final String JOB_NAMES = PropertyProvider.getProperty("JOB_NAMES");
 	private static String jobName;
-	private static String buildNumber;
+	private static Integer buildNumber;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 
 		String[] lines = JOB_NAMES.split(","); 
 		for (String currentJobName : lines) {
@@ -27,11 +28,11 @@ public class Demo {
 			}
 			if (jobList != null) {
 				jobName = jobList[0];
-				buildNumber = jobList[1];
+				buildNumber = Integer.parseInt(jobList[1]);
 				jr.startPrepearing(jobName, buildNumber);
 			} else {
 				jobName = currentJobName;
-				buildNumber = null;
+				buildNumber = 0;
 				jr.startPrepearing(jobName, buildNumber);
 			}
 		}

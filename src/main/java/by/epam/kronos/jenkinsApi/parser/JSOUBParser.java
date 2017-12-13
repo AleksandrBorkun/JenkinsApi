@@ -16,12 +16,13 @@ import by.epam.kronos.jenkinsApi.entity.JenkinsJobList;
 import by.epam.kronos.jenkinsApi.entity.TestCasesFromSuite;
 import by.epam.kronos.jenkinsApi.entity.TestSuiteFromJenkins;
 import by.epam.kronos.jenkinsApi.job.PrepareReportBuilder;
+import by.epam.kronos.jenkinsApi.property.PropertyProvider;
 
 public class JSOUBParser {
 
 	public static final Logger log = LogManager.getLogger(PrepareReportBuilder.class);
 	
-	public static void parseHTMLAndAddResultToJenkinsJobList(InputStream iStream, String jobName, int duration) {
+	public static void parseHTMLAndAddResultToJenkinsJobList(InputStream iStream, String jobName, int duration, int buildNumber) {
 
 		
 		JenkinsJobDetails jobDet = null;
@@ -40,7 +41,8 @@ public class JSOUBParser {
 			int countOfPassedTests = doc.getElementsByAttributeValue("class", "test-status label right outline capitalize pass").size();	//count of passed tests
 			Elements links = doc.getElementsByTag("td");
 			jobDet = new JenkinsJobDetails();
-			jobDet.setJobName(jobName);
+			jobDet.setUrl(PropertyProvider.getProperty("BASE_URL") + "/" + "job" + "/" + jobName + "/" + buildNumber + "/");
+			jobDet.setJobName(jobName + "#" + buildNumber);
 			jobDet.setTotalTestsCount(totalTestsCount);
 			for (Element el : links) {
 				for (Element errorLog : el.getElementsByAttributeValue("class", "step-details")) {

@@ -16,15 +16,15 @@ import by.epam.kronos.jenkinsApi.property.PropertyProvider;
 public class NoSOAPReportBuilder {
 	public static final Logger log = LogManager.getLogger(PrepareReportBuilder.class);
 
-	public void makeReportFromNotSOAPJob(String jobName, String buildNumber, JenkinsServer jenkins) {
+	public void makeReportFromNotSOAPJob(String jobName, int buildNumber, JenkinsServer jenkins) {
 
 		try {
-			String url = jenkins.getJob(jobName).getBuildByNumber(Integer.parseInt(buildNumber)).getUrl();
-			int duration = (int)jenkins.getJob(jobName).getBuildByNumber(Integer.parseInt(buildNumber)).details().getDuration();
-			InputStream file = jenkins.getJob(jobName).getBuildByNumber(Integer.parseInt(buildNumber)).getClient()
+			String url = jenkins.getJob(jobName).getBuildByNumber(buildNumber).getUrl();
+			int duration = (int)jenkins.getJob(jobName).getBuildByNumber(buildNumber).details().getDuration();
+			InputStream file = jenkins.getJob(jobName).getBuildByNumber(buildNumber).getClient()
 					.getFile(URI.create(url + PropertyProvider.getProperty("ARTIFACT_URL")));
 			log.info("Start to make a report for job: " + jobName);
-			JSOUBParser.parseHTMLAndAddResultToJenkinsJobList(file, jobName, duration);
+			JSOUBParser.parseHTMLAndAddResultToJenkinsJobList(file, jobName, duration, buildNumber);
 		} catch (IOException e) {
 			log.info("problem with connect:\n" + Arrays.toString(e.getStackTrace()));
 		}
@@ -38,7 +38,7 @@ public class NoSOAPReportBuilder {
 			InputStream file = jenkins.getJob(jobName).getLastBuild().getClient()
 					.getFile(URI.create(url + PropertyProvider.getProperty("ARTIFACT_URL")));
 			log.info("Start to make a report for job: " + jobName);
-			JSOUBParser.parseHTMLAndAddResultToJenkinsJobList(file, jobName, duration);
+			JSOUBParser.parseHTMLAndAddResultToJenkinsJobList(file, jobName, duration, 0);
 		} catch (IOException e) {
 			log.info("problem with connect:\n" + Arrays.toString(e.getStackTrace()));
 		}

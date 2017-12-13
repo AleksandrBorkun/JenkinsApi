@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFHyperlink;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -82,7 +83,9 @@ public class ExcelParser {
 			createCell(3).setCellValue(jobDetail.getCountOfPass());				// Pass
 			createCell(4).setCellValue(jobDetail.getTotalTestsCount());			//& total tests
 			createCell(5).setCellValue(ReportNameMaker.durationConvert(jobDetail.getJobDuration()));
-			
+			createCell(6).setCellValue("Click HERE");
+			getCell(6).setHyperlink(new HSSFHyperlink(1));
+			getCell(6).getHyperlink().setAddress(jobDetail.getUrl());
 			if(jobDetail.getCountOfFail() == 0)
 				continue;
 			createSheet(checkName);
@@ -145,6 +148,8 @@ public class ExcelParser {
 		else if(jobName.equals("JobsReport")){
 			sheet = workBook.createSheet(jobName);
 			sheet.setColumnWidth(0, 19200); // 19200/256 = 75
+			sheet.setColumnWidth(5, 16*256); // 19200/256 = 75
+			sheet.setColumnWidth(6, 10*256); // 19200/256 = 75
 		}
 		else{
 
@@ -170,6 +175,8 @@ public class ExcelParser {
 			getCell(4).setCellStyle(getBoldFont());	
 			createCell(5).setCellValue("Duration");
 			getCell(5).setCellStyle(getBoldFont());	
+			createCell(6).setCellValue("Job_URL");
+			getCell(6).setCellStyle(getBoldFont());	
 			titleRow++;
 		}		
 	}

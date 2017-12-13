@@ -77,15 +77,30 @@
 		<dependency>
 			<groupId>com.offbytwo.jenkins</groupId>
 			<artifactId>jenkins-client</artifactId>
-			<version>0.3.6</version>
+			<version>0.3.7</version>
 		</dependency>
 
+<!-- https://mvnrepository.com/artifact/com.offbytwo.jenkins/jenkins-client-parent -->
+<dependency>
+    <groupId>com.offbytwo.jenkins</groupId>
+    <artifactId>jenkins-client-parent</artifactId>
+    <version>0.3.7</version>
+    <type>pom</type>
+</dependency>
+		
 		<dependency>
 			<!-- jsoup HTML parser library @ http://jsoup.org/ -->
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
 			<version>1.10.2</version>
 		</dependency>
+
+<!-- https://mvnrepository.com/artifact/com.google.collections/google-collections -->
+<dependency>
+    <groupId>com.google.collections</groupId>
+    <artifactId>google-collections</artifactId>
+    <version>1.0-rc2</version>
+</dependency>
 
 
 	</dependencies>

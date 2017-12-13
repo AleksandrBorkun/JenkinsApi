@@ -5,6 +5,8 @@ import java.util.List;
 
 public class JenkinsJobDetails {
 	
+	private String url;
+
 	private int countOfPass;
 	private int countOfSkip;
 	private int totalTestsCount;
@@ -69,5 +71,13 @@ public class JenkinsJobDetails {
 		this.jobDuration = duration;
 	}
 
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
 	
 }

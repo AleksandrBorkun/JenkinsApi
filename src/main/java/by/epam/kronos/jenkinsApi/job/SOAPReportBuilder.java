@@ -44,10 +44,12 @@ public class SOAPReportBuilder {
 		JenkinsJobList.getInstance().addJenkinsJobToList(jobDetails);
 	}
 
-	public void makeReport(String jobName, String buildNumber, List<TestChildReport> testReportList, int duration) {
+	public void makeReport(String jobName, int buildNumber, List<TestChildReport> testReportList, int duration) {
 
 		makeAllJobPlease(jobName, testReportList);
+		
 
+		jobDetails.setUrl(PropertyProvider.getProperty("BASE_URL") + "/" + "job" + "/" + jobName + "/" + buildNumber + "/");
 		jobDetails.setJobName(jobName + " #" + buildNumber);
 		jobDetails.setCountOfFail(allTestsFailedInJob);
 		if (allTestsFailedInJob == 0) {
@@ -72,10 +74,6 @@ public class SOAPReportBuilder {
 				if (caseCount.isSkipped()) {
 					countOfSkiped++;
 				}
-				// if(caseCount.getStatus().equals("PASSED")){ //
-				// countOfPassedTests++; // it will work when all step will have
-				// assertion
-				// } //
 				totalJobTests++;
 			}
 		}
