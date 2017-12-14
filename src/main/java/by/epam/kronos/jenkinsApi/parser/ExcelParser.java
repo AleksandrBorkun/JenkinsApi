@@ -77,7 +77,16 @@ public class ExcelParser {
 			createTitleHeader();												//This code
 			createRow(titleRow);												//Create title sheet
 			titleRow++;															// and write there 
-			createCell(0).setCellValue(jobDetail.getJobName());					//Job Name & Count of
+			createCell(0).setCellValue(jobDetail.getJobName());
+			if(jobDetail.getJobName().contains("SoapUI")){
+					getCell(0).setCellStyle(getColorStyle("black"));															//Job Name & Count of
+			}
+			else if(jobDetail.getJobName().contains("RestAssured")){
+				getCell(0).setCellStyle(getColorStyle("red"));
+			}
+			else{
+				getCell(0).setCellStyle(getColorStyle("blue"));				
+			}
 			createCell(1).setCellValue(jobDetail.getCountOfFail());				// failed tests
 			createCell(2).setCellValue(jobDetail.getCountOfSkip());				// Skip
 			createCell(3).setCellValue(jobDetail.getCountOfPass());				// Pass
@@ -231,11 +240,11 @@ public class ExcelParser {
 	private HSSFCellStyle getColorStyle(String color){
 	 HSSFCellStyle colorStyle = workBook.createCellStyle();
 		HSSFFont font = workBook.createFont();
-		if(color.toUpperCase().equals("RED"))
+		if(color.equalsIgnoreCase("RED"))
 		font.setColor(Font.COLOR_RED);
-		else if(color.toUpperCase().equals("GREEN"))
+		else if(color.equalsIgnoreCase("GREEN"))
 			font.setColor((short)3);
-		else if(color.toUpperCase().equals("BLUE")){
+		else if(color.equalsIgnoreCase("BLUE")){
 			font.setColor((short)4);
 		}
 		else{
