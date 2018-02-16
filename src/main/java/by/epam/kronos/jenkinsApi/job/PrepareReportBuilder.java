@@ -60,6 +60,9 @@ public class PrepareReportBuilder {
 	private void makeReport(String jobName, int buildNumber) throws IOException {
 
 		try {
+			if(!jobName.contains("SoapUI")){
+				throw new IOException("This is not SOAP UI Job");
+			}
 			restartServer();
 			int duration = (int) jenkins.getJob(jobName).getBuildByNumber(buildNumber).details().getDuration();
 			// here we launch SOAP report by build number
@@ -78,27 +81,6 @@ public class PrepareReportBuilder {
 			log.info("The Job Name: " + jobName + " Does Not exist:\n" + Arrays.toString(e1.getStackTrace()));
 		}
 	}
-	//deprecated method
-/*	private void makeReport(String jobName) {
-
-		try {
-			int duration = (int) jenkins.getJob(jobName).getLastCompletedBuild().details().getDuration();
-			// here we launch latest SOAP report
-			log.info("try to find job by Name " + jobName);
-			List<TestChildReport> testReportList = jenkins.getJob(jobName).getLastCompletedBuild().getTestReport().getChildReports();
-			log.info("Go to SOAP Report Builder to prepare report");
-			soapReport = new SOAPReportBuilder();
-			soapReport.makeReport(jobName, testReportList, duration);
-		} catch (IOException e1) {
-			log.info("Go to NO_SOAP_UI Report Builder find job"); 		//
-			noSoapReport = new NoSOAPReportBuilder(); 					// here we launch No SOAP
-																		// Report
-			noSoapReport.makeReportFromNotSOAPJob(jobName, jenkins); 	//
-		} catch (NullPointerException e1) {
-			log.info("The Job Name: " + jobName + " Does Not exist:\n" + Arrays.toString(e1.getStackTrace()));
-		}
-
-	}*/
 
 	private void restartServer() throws IOException {
 		if (jenkins != null) {
